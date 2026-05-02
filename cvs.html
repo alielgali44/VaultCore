@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Vault Core — CV Screener</title>
+  <meta name="description" content="Upload any number of CVs, define your requirements, and get a scored ranked shortlist back in under two minutes. No manual reading required.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230071e3'/><text y='22' x='5' font-size='18' font-family='system-ui' fill='white'>V</text></svg>">
+  <script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('vc-theme')||'light'); })();</script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root,[data-theme="light"]{
+      --bg:#f8f8fa;--bg-rgb:248,248,250;--surface:#fff;--surface-2:#f2f2f7;--card-bg:#fff;
+      --text-1:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;--border:#e5e5ea;
+      --accent:#0071e3;--accent-h:#0064cc;--accent-dim:rgba(0,113,227,.10);
+      --ok:#16a34a;--ok-bg:#f0fdf4;--warning:#d97706;--warning-bg:#fffbeb;--red:#dc2626;--red-bg:#fef2f2;
+      --sh-sm:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);
+      --sh-md:0 4px 16px rgba(0,0,0,.06),0 1px 4px rgba(0,0,0,.03);
+    }
+    [data-theme="dark"]{
+      --bg:#0a0a0b;--bg-rgb:10,10,11;--surface:#1c1c1e;--surface-2:#2c2c2e;--card-bg:#1c1c1e;
+      --text-1:#f5f5f7;--text-2:#98989d;--text-3:#636366;--border:#2c2c2e;
+      --accent:#0a84ff;--accent-h:#409cff;--accent-dim:rgba(10,132,255,.14);
+      --ok:#4ade80;--ok-bg:#0f2d1b;--warning:#fbbf24;--warning-bg:#2d2310;--red:#f87171;--red-bg:#2d1b1b;
+      --sh-sm:0 1px 3px rgba(0,0,0,.4);--sh-md:0 4px 16px rgba(0,0,0,.5);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--bg);color:var(--text-1);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .55s cubic-bezier(.22,.68,0,1.2),transform .55s cubic-bezier(.22,.68,0,1.2)}
+    .reveal.in{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+    /* NAV */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(var(--bg-rgb),.82);border-bottom:.5px solid var(--border);padding:.75rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .nav-brand{font-size:.95rem;font-weight:600;letter-spacing:-.01em;color:var(--text-1);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+    .brand-pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2.4s ease-out infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,113,227,.55)}70%{box-shadow:0 0 0 7px rgba(0,113,227,0)}100%{box-shadow:0 0 0 0 rgba(0,113,227,0)}}
+    [data-theme="dark"] .brand-pulse{animation-name:pulse-dk}
+    @keyframes pulse-dk{0%{box-shadow:0 0 0 0 rgba(10,132,255,.55)}70%{box-shadow:0 0 0 7px rgba(10,132,255,0)}100%{box-shadow:0 0 0 0 rgba(10,132,255,0)}}
+    .nav-right{display:flex;align-items:center;gap:.75rem}
+    .nav-link{font-size:.82rem;font-weight:500;color:var(--text-2);text-decoration:none;padding:.35rem .75rem;border-radius:980px;transition:color .2s,background .2s;display:flex;align-items:center;gap:.3rem}
+    .nav-link svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
+    .nav-link:hover{color:var(--text-1);background:var(--surface-2)}
+    .nav-cta{font-size:.82rem;font-weight:600;background:var(--accent);color:#fff;text-decoration:none;padding:.38rem 1rem;border-radius:980px;transition:background .18s}
+    .nav-cta:hover{background:var(--accent-h)}
+    .theme-toggle{background:transparent;border:.5px solid var(--border);padding:.38rem .95rem;border-radius:980px;font-size:.8rem;font-weight:500;cursor:pointer;color:var(--text-2);font-family:inherit;transition:background .2s,color .2s}
+    .theme-toggle:hover{background:var(--border);color:var(--text-1)}
+
+    /* LAYOUT */
+    .container{max-width:1080px;margin:0 auto;padding:6.5rem 2rem 5rem}
+    section{margin-bottom:5rem}
+    .section-eyebrow{text-align:center;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);margin-bottom:1rem}
+    .section-title{text-align:center;font-size:1.9rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.5rem;line-height:1.25}
+    .section-sub{text-align:center;font-size:1rem;color:var(--text-2);max-width:520px;margin:0 auto 2.5rem}
+
+    /* HERO */
+    .hero{text-align:center;max-width:700px;margin:0 auto 2rem}
+    .badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent-dim);border:.5px solid rgba(0,113,227,.25);color:var(--accent);padding:.3rem 1rem;border-radius:980px;font-size:.73rem;font-weight:600;letter-spacing:.02em;margin-bottom:1.5rem}
+    [data-theme="dark"] .badge{border-color:rgba(10,132,255,.3)}
+    .hero h1{font-size:2.9rem;font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:1.1rem;background:linear-gradient(135deg,var(--accent) 0%,var(--text-1) 55%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-lead{font-size:1.1rem;color:var(--text-2);line-height:1.65;margin-bottom:.75rem;max-width:560px;margin-left:auto;margin-right:auto}
+    .hero-note{font-size:.85rem;color:var(--text-3);margin-bottom:1.75rem}
+    .hero-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+    .btn-primary{display:inline-flex;align-items:center;gap:.45rem;background:var(--accent);color:#fff;text-decoration:none;padding:.72rem 1.8rem;border-radius:980px;font-weight:500;font-size:.92rem;transition:background .18s,transform .12s}
+    .btn-primary:hover{background:var(--accent-h);transform:scale(1.025)}
+    .btn-ghost{display:inline-flex;align-items:center;gap:.45rem;background:var(--surface);color:var(--text-2);text-decoration:none;padding:.72rem 1.8rem;border-radius:980px;border:.5px solid var(--border);font-weight:500;font-size:.92rem;transition:border-color .2s,color .2s}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* PROOF STRIP */
+    .proof-strip{display:flex;flex-wrap:wrap;background:var(--surface);border:.5px solid var(--border);border-radius:1.25rem;box-shadow:var(--sh-sm);margin:2rem 0 3.5rem;overflow:hidden}
+    .proof-item{flex:1 1 160px;text-align:center;padding:1.25rem 1rem;border-right:.5px solid var(--border)}
+    .proof-item:last-child{border-right:none}
+    .proof-num{display:block;font-size:1.6rem;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1;margin-bottom:.3rem}
+    .proof-label{font-size:.75rem;color:var(--text-2)}
+
+    /* STEPS */
+    .steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;position:relative}
+    .steps-row::before{content:'';position:absolute;top:1.1rem;left:calc(16.66% + 1rem);right:calc(16.66% + 1rem);height:1px;background:var(--border);z-index:0}
+    .step-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:1.5rem;padding:1.75rem;box-shadow:var(--sh-sm);position:relative;z-index:1;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .step-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--sh-md)}
+    .step-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;margin-bottom:1rem}
+    .step-card h3{font-size:.95rem;font-weight:600;margin-bottom:.45rem}
+    .step-card p{font-size:.82rem;color:var(--text-2);line-height:1.6}
+
+    /* OUTPUT CARDS */
+    .outputs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .output-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:1.5rem;padding:1.5rem;box-shadow:var(--sh-sm);transition:border-color .2s,transform .2s,box-shadow .2s}
+    .output-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--sh-md)}
+    .output-emoji{font-size:1.6rem;margin-bottom:.75rem;display:block}
+    .output-emoji svg{width:1em;height:1em;vertical-align:middle}
+    .output-card h4{font-size:.95rem;font-weight:600;margin-bottom:.4rem}
+    .output-card p{font-size:.8rem;color:var(--text-2);line-height:1.55}
+    .output-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.9rem}
+    .tag{font-size:.65rem;font-weight:500;padding:.2rem .55rem;border-radius:980px;border:.5px solid transparent;display:inline-flex;align-items:center;gap:.25rem}
+    .tag svg{width:0.9em;height:0.9em;flex-shrink:0}
+    .tag-blue{background:var(--accent-dim);color:var(--accent);border-color:rgba(0,113,227,.2)}
+    .tag-green{background:var(--ok-bg);color:var(--ok);border-color:rgba(22,163,74,.2)}
+    .tag-amber{background:var(--warning-bg);color:var(--warning);border-color:rgba(217,119,6,.2)}
+    .tag-red{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,.2)}
+
+    /* FEATURE GRID */
+    .feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    .feature-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:1.5rem;padding:1.75rem;box-shadow:var(--sh-sm);display:flex;align-items:flex-start;gap:1rem;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .feature-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--sh-md)}
+    .feature-icon{flex-shrink:0;width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center}
+    .feature-icon svg{width:20px;height:20px;stroke:var(--accent);stroke-width:1.75;fill:none}
+    .feature-card h3{font-size:.95rem;font-weight:600;margin-bottom:.35rem}
+    .feature-card p{font-size:.82rem;color:var(--text-2);line-height:1.55}
+
+    /* CTA */
+    .cta-block{background:var(--surface);border:.5px solid var(--border);border-radius:2rem;padding:3rem 2rem;text-align:center;box-shadow:var(--sh-md);position:relative;overflow:hidden}
+    .cta-block::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,113,227,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,113,227,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+    .cta-block h2{position:relative;font-size:1.75rem;font-weight:700;letter-spacing:-.025em;margin-bottom:.5rem}
+    .cta-block p{position:relative;color:var(--text-2);font-size:.95rem;max-width:460px;margin:0 auto 1.75rem;line-height:1.65}
+    .cta-actions{position:relative;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+
+    /* DECISION BADGE */
+    .decision-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .decision-card{border-radius:1.25rem;padding:1.25rem;text-align:center;border:.5px solid transparent}
+    .decision-card .decision-emoji{font-size:1.8rem;display:block;margin-bottom:.5rem}
+    .decision-card .decision-emoji svg{width:1em;height:1em;vertical-align:middle}
+    .decision-card h4{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+    .decision-card p{font-size:.78rem;color:var(--text-2);line-height:1.5}
+    .d-green{background:var(--ok-bg);border-color:rgba(22,163,74,.25)}
+    .d-amber{background:var(--warning-bg);border-color:rgba(217,119,6,.25)}
+    .d-red{background:var(--red-bg);border-color:rgba(220,38,38,.25)}
+
+    footer{text-align:center;font-size:.73rem;color:var(--text-3);border-top:.5px solid var(--border);padding-top:2rem;line-height:2}
+    @media(max-width:768px){.steps-row,.outputs-grid,.feature-grid,.decision-row{grid-template-columns:1fr}.steps-row::before{display:none}}
+    @media(max-width:600px){.container{padding:5.5rem 1.1rem 4rem}.hero h1{font-size:2rem}.nav{padding:.7rem 1.1rem}.proof-strip{border-radius:1rem}.proof-item{border-right:none;border-bottom:.5px solid var(--border)}.proof-item:last-child{border-bottom:none}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="https://alielgali44.github.io/VaultCore/">
+    <span class="brand-pulse"></span>Vault Core
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="https://alielgali44.github.io/VaultCore/">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>All tools
+    </a>
+    <a class="nav-cta" href="https://wa.me/256726432203?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20the%20CV%20Screener" target="_blank" rel="noopener">Request access</a>
+    <button class="theme-toggle" id="themeToggle">
+      <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      Dark
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section style="margin-bottom:1.5rem">
+    <div class="hero">
+      <div class="badge reveal">
+        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+          <rect x="8" y="2" width="8" height="4" rx="1"/>
+          <line x1="12" y1="11" x2="12" y2="17"/>
+          <polyline points="9 14 12 17 15 14"/>
+        </svg>
+        Built for HR teams and hiring managers
+      </div>
+      <h1 class="reveal d1">Screen every CV.<br>In under two minutes.</h1>
+      <p class="hero-lead reveal d2">Upload any number of CVs, define your minimum requirements, and get a scored ranked shortlist back automatically. No manual reading. No missed candidates.</p>
+      <p class="hero-note reveal d3">Works with any PDF CV. Your data stays local — never uploaded to a cloud service.</p>
+      <div class="hero-actions reveal d4">
+        <a href="https://wa.me/256726432203?text=Hi%2C%20I%27d%20like%20to%20request%20access%20to%20the%20Vault%20Core%20CV%20Screener" target="_blank" rel="noopener" class="btn-primary">Request access</a>
+        <a href="https://alielgali44.github.io/VaultCore/" class="btn-ghost">← Back to all tools</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <div class="proof-strip reveal">
+    <div class="proof-item">
+      <span class="proof-num">&lt;2min</span>
+      <span class="proof-label">Shortlist ready, any batch size</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">100%</span>
+      <span class="proof-label">Local — data never leaves your system</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">Zero</span>
+      <span class="proof-label">Manual CV reading required</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">Full</span>
+      <span class="proof-label">Skill gap analysis per candidate</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <p class="section-eyebrow reveal">How it works</p>
+    <h2 class="section-title reveal d1">Three inputs. One ranked shortlist.</h2>
+    <p class="section-sub reveal d2">No training, no configuration. Tell the system what you need and upload the CVs — it does the rest.</p>
+    <div class="steps-row">
+      <div class="step-card reveal d1">
+        <div class="step-num">1</div>
+        <h3>Set your requirements</h3>
+        <p>Enter the minimum years of experience and the skills you need — separated by commas. Takes 30 seconds.</p>
+      </div>
+      <div class="step-card reveal d2">
+        <div class="step-num">2</div>
+        <h3>Upload the CVs</h3>
+        <p>Drop any number of PDF CVs in one go. The system reads every one — extracts skills, experience, and work history automatically.</p>
+      </div>
+      <div class="step-card reveal d3">
+        <div class="step-num">3</div>
+        <h3>Receive your shortlist</h3>
+        <p>A scored CSV lands in your output folder. Every candidate ranked, with matched skills, missing skills, and a clear HR decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section>
+    <p class="section-eyebrow reveal">What you get</p>
+    <h2 class="section-title reveal d1">Three things in every output.</h2>
+    <p class="section-sub reveal d2">Every run produces a clean, structured result your HR team can act on immediately.</p>
+    <div class="outputs-grid">
+      <div class="output-card reveal d1">
+        <span class="output-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="8 12 11 15 16 9"/>
+          </svg>
+        </span>
+        <h4>HR Decision per candidate</h4>
+        <p>Each candidate gets a clear verdict — Shortlisted, Review, or Rejected — based on your exact requirements. No guesswork.</p>
+        <div class="output-tags">
+          <span class="tag tag-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="5 12 10 17 19 8"/>
+            </svg>
+            Shortlisted
+          </span>
+          <span class="tag tag-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            Review
+          </span>
+          <span class="tag tag-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            Rejected
+          </span>
+        </div>
+      </div>
+      <div class="output-card reveal d2">
+        <span class="output-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="6"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </span>
+        <h4>Skill match + gap analysis</h4>
+        <p>For every candidate, the system shows which required skills they have — with the evidence pulled directly from their CV — and which are missing.</p>
+        <div class="output-tags">
+          <span class="tag tag-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="5 12 10 17 19 8"/>
+            </svg>
+            Matched skills
+          </span>
+          <span class="tag tag-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            Missing skills
+          </span>
+          <span class="tag tag-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            Evidence quotes
+          </span>
+        </div>
+      </div>
+      <div class="output-card reveal d3">
+        <span class="output-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="8" width="4" height="12" rx="1"/>
+            <rect x="10" y="4" width="4" height="16" rx="1"/>
+            <rect x="17" y="12" width="4" height="8" rx="1"/>
+          </svg>
+        </span>
+        <h4>Ranked score out of 100</h4>
+        <p>Experience and skills are scored separately and combined. The CSV is sortable by total score — top candidates surface instantly.</p>
+        <div class="output-tags">
+          <span class="tag tag-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Experience score
+          </span>
+          <span class="tag tag-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Skills score
+          </span>
+          <span class="tag tag-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="5 12 10 17 19 8"/>
+            </svg>
+            Total / 100
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HR DECISION EXPLAINED -->
+  <section>
+    <p class="section-eyebrow reveal">The verdict system</p>
+    <h2 class="section-title reveal d1">Traffic light decisions. No ambiguity.</h2>
+    <p class="section-sub reveal d2">Every candidate lands in one of three categories based on their total score.</p>
+    <div class="decision-row">
+      <div class="decision-card d-green reveal d1">
+        <span class="decision-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="8 12 11 15 16 9"/>
+          </svg>
+        </span>
+        <h4>Shortlisted</h4>
+        <p>Score 80 or above. Meets experience requirement and most required skills. Move to interview.</p>
+      </div>
+      <div class="decision-card d-amber reveal d2">
+        <span class="decision-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <h4>Review</h4>
+        <p>Score between 50 and 79. Partial match — worth a manual look before deciding.</p>
+      </div>
+      <div class="decision-card d-red reveal d3">
+        <span class="decision-emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </span>
+        <h4>Rejected</h4>
+        <p>Score below 50. Does not meet the minimum threshold for this role.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <p class="section-eyebrow reveal">What's under the hood</p>
+    <h2 class="section-title reveal d1">Built for real HR workflows.</h2>
+    <p class="section-sub reveal d2">Every detail was designed around what actually matters in a hiring process.</p>
+    <div class="feature-grid">
+      <div class="feature-card reveal d1">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h3>PII redaction before processing</h3>
+          <p>Email addresses and phone numbers are automatically redacted before the CV is analysed. The scoring is based on skills and experience only — no personal data is sent to any AI service.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal d2">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <h3>Batch processing — any number of CVs</h3>
+          <p>Upload 1 CV or 100 in the same run. The system processes each one independently and returns a single ranked CSV with all candidates.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal d3">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <h3>Evidence-backed extraction</h3>
+          <p>Every matched skill includes the exact sentence from the CV that proves it. Your HR team can verify any decision in seconds — no black box.</p>
+        </div>
+      </div>
+      <div class="feature-card reveal d4">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <h3>Output ready for immediate use</h3>
+          <p>The CSV shortlist is formatted to open directly in Excel or Google Sheets. Sort by score, filter by decision, share with the hiring manager — zero reformatting needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="reveal">
+    <div class="cta-block">
+      <h2>Ready to stop reading CVs manually?</h2>
+      <p>Send us your next job description and a sample batch of CVs. We'll run them through the system and send back the shortlist — at no cost, before you commit to anything.</p>
+      <div class="cta-actions">
+        <a href="https://wa.me/256726432203?text=Hi%2C%20I%27d%20like%20to%20try%20the%20Vault%20Core%20CV%20Screener%20with%20my%20own%20CVs" target="_blank" rel="noopener" class="btn-primary">
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+            <path d="M9 8h6"/>
+          </svg>
+          Request a demo on WhatsApp
+        </a>
+        <a href="https://alielgali44.github.io/VaultCore/" class="btn-ghost">← See all Vault Core tools</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>Works with any PDF CV · Local-first · No cloud · PII redaction built in · © 2026 Vault Core</footer>
+</div>
+
+<script>
+  const html=document.documentElement,toggle=document.getElementById('themeToggle');
+  const sunIcon = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  const moonIcon = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  function applyTheme(t){
+    html.setAttribute('data-theme',t);
+    localStorage.setItem('vc-theme',t);
+    toggle.innerHTML = t==='dark' ? sunIcon + ' Light' : moonIcon + ' Dark';
+  }
+  toggle.innerHTML = html.getAttribute('data-theme')==='dark' ? sunIcon + ' Light' : moonIcon + ' Dark';
+  toggle.addEventListener('click',()=>applyTheme(html.getAttribute('data-theme')==='dark'?'light':'dark'));
+  const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
