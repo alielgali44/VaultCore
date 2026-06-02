@@ -1,0 +1,49 @@
+/* ═══════════════════════════════════════
+   css/compliance.css
+   Styles unique to compliance-tracker.html
+═══════════════════════════════════════ */
+
+/* ── HERO ─────────────────────────────── */
+.hero h1 { font-size:2.9rem; }
+
+/* ── STEP NUMBERS (solid accent circle) ── */
+.step-num {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; font-weight:700; margin-bottom:1rem;
+}
+
+/* ── STATUS BADGE (amber — limited intake) ── */
+.status-badge {
+  background:var(--warning-bg); color:var(--warning);
+  border:.5px solid rgba(217,119,6,.3);
+}
+
+/* ── ALERT TIERS ──────────────────────── */
+.tiers { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.tier-card {
+  background:var(--card-bg); border:.5px solid var(--border);
+  border-radius:1.25rem; padding:1.25rem; text-align:center; box-shadow:var(--sh-sm);
+}
+.tier-dot { width:12px; height:12px; border-radius:50%; margin:0 auto .75rem; }
+.tier-card h4 { font-size:.88rem; font-weight:600; margin-bottom:.3rem; }
+.tier-card p  { font-size:.78rem; color:var(--text-2); line-height:1.5; }
+
+.tier-ok   { border-color:rgba(22,163,74,.3); }
+.tier-ok   .tier-dot { background:var(--ok); }
+.tier-warn { border-color:rgba(217,119,6,.3); }
+.tier-warn .tier-dot { background:var(--warning); }
+.tier-crit { border-color:rgba(220,38,38,.3); }
+.tier-crit .tier-dot { background:var(--red); }
+.tier-esc  { border-color:rgba(220,38,38,.5); background:var(--red-bg); }
+.tier-esc  .tier-dot { background:var(--red); }
+
+/* ── RESPONSIVE ───────────────────────── */
+@media (max-width:768px) {
+  .tiers { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:600px) {
+  .hero h1 { font-size:2rem; }
+  .tiers   { grid-template-columns:1fr 1fr; }
+}

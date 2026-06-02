@@ -1,0 +1,110 @@
+/* ═══════════════════════════════════════
+   css/home.css
+   Styles unique to index.html (hub page)
+═══════════════════════════════════════ */
+
+/* ── HERO ─────────────────────────────── */
+.hero { max-width:720px; }
+.hero h1 { font-size:3.2rem; }
+
+/* ── PILLARS ──────────────────────────── */
+.pillars { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+.pillar-card {
+  background:var(--card-bg); border:.5px solid var(--border);
+  border-radius:1.5rem; padding:1.75rem; box-shadow:var(--sh-sm);
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.pillar-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--sh-md); }
+.pillar-icon { width:40px; height:40px; margin-bottom:1rem; stroke:var(--accent); stroke-width:1.5; fill:none; display:block; }
+.pillar-card h3 { font-size:.95rem; font-weight:600; margin-bottom:.45rem; letter-spacing:-.01em; }
+.pillar-card p  { font-size:.82rem; color:var(--text-2); line-height:1.55; }
+
+/* ── TRUST ROW ────────────────────────── */
+.trust-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+.trust-item {
+  display:flex; align-items:flex-start; gap:.85rem;
+  background:var(--surface); border:.5px solid var(--border);
+  border-radius:1.25rem; padding:1.25rem; box-shadow:var(--sh-sm);
+}
+.trust-icon {
+  flex-shrink:0; width:36px; height:36px; border-radius:10px;
+  background:var(--accent-dim); display:flex; align-items:center; justify-content:center;
+}
+.trust-icon svg { width:18px; height:18px; stroke:var(--accent); stroke-width:1.75; fill:none; }
+.trust-item h4 { font-size:.88rem; font-weight:600; margin-bottom:.25rem; }
+.trust-item p  { font-size:.78rem; color:var(--text-2); line-height:1.5; }
+
+/* ── PRODUCTS GRID ────────────────────── */
+.products-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+.product-card {
+  background:var(--card-bg); border:.5px solid var(--border);
+  border-radius:1.5rem; padding:1.75rem; box-shadow:var(--sh-sm);
+  text-decoration:none; color:inherit; display:block;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  position:relative; overflow:hidden;
+}
+.product-card.active:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--sh-md); }
+.product-card.inactive     { cursor:default; opacity:.72; }
+
+.product-status {
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-size:.7rem; font-weight:600; padding:.22rem .7rem;
+  border-radius:980px; margin-bottom:1rem; letter-spacing:.02em;
+}
+.status-live  { background:var(--ok-bg);      color:var(--ok);     border:.5px solid rgba(22,163,74,.25); }
+.status-soon  { background:var(--surface-2);  color:var(--text-3); border:.5px solid var(--border); }
+.status-build { background:var(--warning-bg); color:var(--warning);border:.5px solid rgba(217,119,6,.25); }
+.status-live .status-dot { animation: dot-pulse 2s ease-in-out infinite; }
+
+.product-card h3    { font-size:1.05rem; font-weight:700; margin-bottom:.45rem; letter-spacing:-.015em; }
+.product-card p     { font-size:.82rem; color:var(--text-2); line-height:1.55; margin-bottom:1.1rem; }
+.product-link       { display:inline-flex; align-items:center; gap:.35rem; font-size:.8rem; font-weight:600; color:var(--accent); transition: gap .15s; }
+.product-link-arrow { font-size:1rem; line-height:1; }
+.product-card.active:hover .product-link { gap:.6rem; }
+
+/* ── SOFT CTA (home variant) ──────────── */
+.soft-cta {
+  background:var(--surface); border:.5px solid var(--border);
+  border-radius:2rem; padding:3rem 2rem;
+  text-align:center; box-shadow:var(--sh-md);
+  position:relative; overflow:hidden;
+}
+.soft-cta::before {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(0,113,227,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,113,227,.025) 1px,transparent 1px);
+  background-size:40px 40px; pointer-events:none;
+}
+.soft-cta h2 { position:relative; font-size:1.75rem; font-weight:700; letter-spacing:-.025em; margin-bottom:.5rem; }
+.soft-cta p  { position:relative; color:var(--text-2); font-size:.95rem; max-width:480px; margin:0 auto 1.75rem; line-height:1.65; }
+.soft-cta-actions { position:relative; display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; }
+
+/* ── RESPONSIVE ───────────────────────── */
+@media (max-width:840px) {
+  .pillars       { grid-template-columns:1fr; }
+  .trust-row     { grid-template-columns:1fr; }
+  .products-grid { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+  .hero h1 { font-size:2.1rem; }
+  .nav-link { display:none; }
+}
+
+/* 5th card reveal delay */
+.d5 { transition-delay:.40s; }
+
+/* 5-card products grid: keep 3-col, last 2 cards get auto-centering on wide screens */
+@media (min-width:841px) {
+  .products-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .products-grid .product-card:nth-child(1) { grid-column: span 2; }
+  .products-grid .product-card:nth-child(2) { grid-column: span 2; }
+  .products-grid .product-card:nth-child(3) { grid-column: span 2; }
+  .products-grid .product-card:nth-child(4) { grid-column: 2 / span 2; }
+  .products-grid .product-card:nth-child(5) { grid-column: span 2; }
+}
