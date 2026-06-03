@@ -107,3 +107,12 @@
 .mobile-cta a { display:flex; align-items:center; justify-content:center; gap:.5rem; background:var(--accent); color:#fff; padding:.75rem; border-radius:14px; font-weight:600; font-size:.9rem; text-decoration:none; transition:background .18s; }
 .mobile-cta a:hover { background:var(--accent-h); }
 @media (max-width:600px) { .mobile-cta { display:block; } }
+
+/* ── OUTPUT CARDS GRID ── */
+.outputs-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.output-card { background:var(--card-bg); border:.5px solid var(--border); border-radius:1.5rem; padding:1.5rem; box-shadow:var(--sh-sm); transition:border-color .2s,transform .2s,box-shadow .2s; }
+.output-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--sh-md); }
+.output-card h4 { font-size:.95rem; font-weight:600; margin-bottom:.4rem; }
+.output-card p  { font-size:.8rem; color:var(--text-2); line-height:1.5; }
+
+@media (max-width:840px) { .outputs-grid { grid-template-columns:1fr; } }
