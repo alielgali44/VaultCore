@@ -1,0 +1,109 @@
+/* ── Extra tokens (not in shared.css) ───────── */
+:root, [data-theme="light"] {
+  --critical:    #dc2626;
+  --critical-bg: #fef2f2;
+  --sh-lg:    0 12px 32px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.04);
+  --sh-hover: 0 20px 40px rgba(0,0,0,.12);
+  --step-line: #e5e5ea;
+}
+[data-theme="dark"] {
+  --critical:    #f87171;
+  --critical-bg: #2d1b1b;
+  --sh-lg:    0 12px 32px rgba(0,0,0,.6);
+  --sh-hover: 0 20px 40px rgba(0,0,0,.7);
+  --step-line: #2c2c2e;
+}
+
+/* Container override — extra bottom padding for mobile-cta */
+@media (max-width:600px) {
+  .container { padding:5.5rem 1.1rem 7rem; }
+}
+
+/* ── STATS BAR ──────────────────────────────── */
+.stats-bar { display:flex; flex-wrap:wrap; background:var(--surface); border:.5px solid var(--border); border-radius:1.25rem; padding:1.25rem 1rem; box-shadow:var(--sh-sm); margin:2rem 0 3rem; }
+.stat-item { flex:1 1 160px; text-align:center; padding:.5rem 1.25rem; border-right:.5px solid var(--border); }
+.stat-item:last-child { border-right:none; }
+.stat-num   { display:block; font-size:1.6rem; font-weight:700; letter-spacing:-.02em; color:var(--accent); line-height:1; margin-bottom:.3rem; }
+.stat-label { font-size:.75rem; color:var(--text-2); }
+
+@media (max-width:600px) {
+  .stats-bar { border-radius:1rem; }
+  .stat-item { border-right:none; border-bottom:.5px solid var(--border); }
+  .stat-item:last-child { border-bottom:none; }
+}
+
+/* ── DEMO CARD ──────────────────────────────── */
+.demo-wrap { background:var(--card-bg); border-radius:2rem; border:.5px solid var(--border); box-shadow:var(--sh-md); overflow:hidden; transition:transform .25s, box-shadow .25s; }
+.demo-wrap:hover { transform:translateY(-5px); box-shadow:var(--sh-hover); }
+.demo-thumb { position:relative; background:linear-gradient(135deg,#0f1923 0%,#0a1628 50%,#050e1f 100%); text-align:center; overflow:hidden; display:block; text-decoration:none; }
+.demo-thumb::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,113,227,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,113,227,.06) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+.demo-thumb::after { content:''; position:absolute; width:300px; height:300px; background:radial-gradient(circle,rgba(0,113,227,.18) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+.demo-tag { position:absolute; top:1rem; right:1rem; z-index:3; background:rgba(22,163,74,.2); border:.5px solid rgba(22,163,74,.4); color:#4ade80; font-size:.7rem; font-weight:600; padding:.25rem .7rem; border-radius:980px; }
+.demo-body   { padding:1.5rem 2rem 1.75rem; text-align:center; }
+.demo-body p { color:var(--text-2); font-size:.9rem; margin-bottom:1rem; }
+
+/* ── OUTPUT ICON (bare SVG, no box background) ── */
+.output-icon { width:28px; height:28px; margin-bottom:.75rem; stroke:var(--accent); stroke-width:1.5; fill:none; display:block; }
+
+/* ── HOW IT WORKS (active-step variant) ─────── */
+.steps { display:grid; grid-template-columns:repeat(3,1fr); position:relative; gap:0; }
+.steps::before { content:''; position:absolute; top:1.35rem; left:calc(16.66% + 1.5rem); right:calc(16.66% + 1.5rem); height:1px; background:var(--step-line); z-index:0; }
+.step { text-align:center; padding:1rem 1.5rem; position:relative; z-index:1; }
+.step .step-num { width:44px; height:44px; border-radius:50%; background:var(--card-bg); border:.5px solid var(--border); box-shadow:var(--sh-sm); display:flex; align-items:center; justify-content:center; margin:0 auto .9rem; font-size:.85rem; font-weight:700; color:var(--accent); }
+.step.active .step-num { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-dim); }
+.step h4 { font-size:.95rem; font-weight:600; margin-bottom:.4rem; }
+.step p  { font-size:.8rem; color:var(--text-2); line-height:1.5; }
+
+@media (max-width:840px) {
+  .steps { grid-template-columns:1fr; gap:1.5rem; }
+  .steps::before { display:none; }
+}
+
+/* ── BEFORE / AFTER ─────────────────────────── */
+.before-after { display:grid; grid-template-columns:1fr auto 1fr; gap:1rem; align-items:start; }
+.ba-card { background:var(--card-bg); border:.5px solid var(--border); border-radius:1.5rem; padding:1.5rem; box-shadow:var(--sh-sm); }
+.ba-card.before { border-color:rgba(220,38,38,.35); }
+.ba-card.after  { border-color:rgba(22,163,74,.35); }
+.ba-label { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+.ba-card.before .ba-label { color:var(--critical); }
+.ba-card.after  .ba-label { color:var(--ok); }
+.ba-label-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.ba-card.before .ba-label-dot { background:var(--critical); }
+.ba-card.after  .ba-label-dot { background:var(--ok); }
+.ba-row { display:flex; align-items:flex-start; gap:.65rem; margin-bottom:.7rem; font-size:.84rem; color:var(--text-2); }
+.ba-icon { flex-shrink:0; margin-top:.1rem; width:14px; height:14px; stroke-width:2; fill:none; }
+.ba-card.before .ba-icon { stroke:var(--critical); opacity:.7; }
+.ba-card.after  .ba-icon { stroke:var(--ok); opacity:.85; }
+.ba-arrow { display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--accent); padding-top:1.6rem; flex-shrink:0; }
+
+@media (max-width:840px) {
+  .before-after { grid-template-columns:1fr; }
+  .ba-arrow { transform:rotate(90deg); padding:0; margin:.25rem auto; }
+}
+
+/* ── BENEFITS (4-col) ───────────────────────── */
+.benefits { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.benefit-card { background:var(--card-bg); border:.5px solid var(--border); border-radius:1.5rem; padding:1.5rem; box-shadow:var(--sh-sm); transition:border-color .2s,transform .2s,box-shadow .2s; }
+.benefit-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--sh-md); }
+.benefit-icon { width:32px; height:32px; margin-bottom:.75rem; stroke:var(--accent); stroke-width:1.5; fill:none; display:block; }
+.benefit-card h4 { font-size:.95rem; font-weight:600; margin-bottom:.4rem; }
+.benefit-card p  { font-size:.8rem; color:var(--text-2); line-height:1.45; }
+
+@media (max-width:840px) { .benefits { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:600px) { .benefits { gap:.75rem; } }
+
+/* ── CTA (solid blue — unique to this page) ─── */
+.cta-section { background:linear-gradient(135deg,#0071e3 0%,#0055b3 100%); border-radius:2rem; padding:3rem 2rem; text-align:center; box-shadow:var(--sh-lg); position:relative; overflow:hidden; }
+.cta-section::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:32px 32px; }
+.cta-section h2 { position:relative; font-size:2rem; font-weight:700; color:#fff; letter-spacing:-.02em; margin-bottom:.6rem; }
+.cta-section p  { position:relative; color:rgba(255,255,255,.75); font-size:1rem; margin-bottom:.4rem; }
+.cta-note       { position:relative; font-size:.78rem; color:rgba(255,255,255,.5); margin-bottom:1.5rem !important; }
+.cta-button     { position:relative; display:inline-flex; align-items:center; gap:.5rem; background:#fff; color:var(--accent); padding:.8rem 2rem; border-radius:980px; font-weight:600; font-size:.95rem; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.25); transition:transform .15s,box-shadow .15s; }
+.cta-button:hover { transform:scale(1.03); box-shadow:0 6px 20px rgba(0,0,0,.35); }
+@media (max-width:600px) { .cta-section h2 { font-size:1.5rem; } }
+
+/* ── STICKY MOBILE CTA ──────────────────────── */
+.mobile-cta { display:none; position:fixed; bottom:0; left:0; right:0; z-index:300; background:var(--surface); border-top:.5px solid var(--border); padding:.85rem 1.25rem calc(.85rem + env(safe-area-inset-bottom)); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+.mobile-cta a { display:flex; align-items:center; justify-content:center; gap:.5rem; background:var(--accent); color:#fff; padding:.75rem; border-radius:14px; font-weight:600; font-size:.9rem; text-decoration:none; transition:background .18s; }
+.mobile-cta a:hover { background:var(--accent-h); }
+@media (max-width:600px) { .mobile-cta { display:block; } }
